@@ -1,5 +1,5 @@
 export interface SealingProvider {
-  readonly type: 'enclave' | 'device-p256' | 'passphrase';
+  readonly type: 'enclave' | 'device-p256' | 'passphrase' | 'prf';
   isSupported(): boolean;
   publicKey?(): Promise<string>;
   wrap(contentKey: Uint8Array): Promise<Uint8Array>;

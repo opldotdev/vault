@@ -5,6 +5,13 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/browser.js",
+      "default": "./dist/index.js"
+    }
+  },
   "bin": {
     "vault": "./dist/cli/vault.js"
   },
@@ -16,7 +23,7 @@
   "license": "MIT",
   "repository": "git+https://github.com/opldotdev/vault.git",
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir ./dist --format esm --target bun --packages external && bun build ./cli/vault.ts --outdir ./dist/cli --format esm --target bun --packages external && tsc -p tsconfig.build.json",
+    "build": "bun build ./src/index.ts --outdir ./dist --format esm --target bun --packages external && bun build ./src/browser.ts --outfile ./dist/browser.js --format esm --target browser --packages external && bun build ./cli/vault.ts --outdir ./dist/cli --format esm --target bun --packages external && tsc -p tsconfig.build.json",
     "test": "bun test",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
