@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://opl.dev/vault/schema/vault-document.schema.json",
+  "title": "VaultDocument",
+  "type": "object",
+  "required": ["version", "id", "createdAt", "updatedAt", "settings", "entries", "log"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" },
+    "settings": {
+      "type": "object",
+      "required": ["revealEnabled", "unlockTtlSeconds"],
+      "additionalProperties": false,
+      "properties": {
+        "revealEnabled": { "type": "boolean" },
+        "unlockTtlSeconds": { "type": "number" }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/entry" }
+    },
+    "log": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/logLine" }
+    }
+  },
+  "definitions": {
+    "entryKind": {
+      "type": "string",
+      "enum": [
+        "entropy",
+        "mnemonic",
+        "hd-private",
+        "hd-public",
+        "private",
+        "wif",
+        "account",
+        "share",
+        "symmetric"
+      ]
+    },
+    "derivation": {
+      "type": "object",
+      "required": ["scheme"],
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "type": "string",
+          "enum": ["brc157", "bip32", "type42", "brc42", "legacy-bip32-unhardened"]
+        },
+        "path": { "type": "string" },
+        "parentIdentityKey": { "type": "string" },
+        "index": { "type": "integer" },
+        "cohort": { "type": "string" }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "required": ["id", "kind", "label", "tags", "createdAt", "updatedAt", "value", "metadata"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "$ref": "#/definitions/entryKind" },
+        "label": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "value": { "type": "string" },
+        "publicKey": { "type": "string" },
+        "derivation": { "$ref": "#/definitions/derivation" },
+        "roles": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "identity": { "type": "boolean" },
+            "funding": { "type": "boolean" },
+            "ordinals": { "type": "boolean" },
+            "encryption": { "type": "boolean" }
+          }
+        },
+        "shares": {
+          "type": "object",
+          "required": ["threshold", "total", "shareIds"],
+          "additionalProperties": false,
+          "properties": {
+            "threshold": { "type": "integer" },
+            "total": { "type": "integer" },
+            "shareIds": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "metadata": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "logLine": {
+      "type": "object",
+      "required": ["at", "op", "ok"],
+      "additionalProperties": false,
+      "properties": {
+        "at": { "type": "string" },
+        "op": { "type": "string" },
+        "entryId": { "type": "string" },
+        "reason": { "type": "string" },
+        "caller": { "type": "string" },
+        "ok": { "type": "boolean" },
+        "detail": { "type": "string" }
+      }
+    }
+  }
+}
