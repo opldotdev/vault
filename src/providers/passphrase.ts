@@ -36,7 +36,8 @@ export class PassphraseProvider implements SealingProvider {
   readonly type = 'passphrase' as const;
 
   constructor(
-    private readonly passphrase: string,
+    /** The passphrase; also passed through verbatim to pbkdf2 backup slots by src/store.ts. */
+    readonly passphrase: string,
     private readonly iterations: number = DEFAULT_PBKDF2_ITERATIONS,
   ) {
     if (passphrase.length === 0) throw new Error('empty passphrase');

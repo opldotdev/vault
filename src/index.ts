@@ -8,4 +8,5 @@ export * from './shares.js';
 export * from './signer.js';
 export * from './storage/file-storage.js';
 export * from './storage/memory-storage.js';
+export * from './store.js';
 export * from './vault.js';

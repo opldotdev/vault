@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@bsv/sdk": "^2.4.2",
-    "bitcoin-backup": "^0.0.14"
+    "bitcoin-backup": "file:/Users/satchmo/code/worktrees/bitcoin-backup-slots"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
