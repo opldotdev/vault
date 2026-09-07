@@ -93,7 +93,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function checkEntry(raw: unknown, index: number): Entry {
+export function validateEntry(raw: unknown, index = 0): Entry {
   if (!isRecord(raw)) fail(`entries[${index}]: must be an object`);
   if (typeof raw.id !== 'string' || raw.id.length === 0) fail(`entries[${index}]: bad id`);
   if (typeof raw.kind !== 'string' || !(ENTRY_KINDS as string[]).includes(raw.kind)) {
@@ -183,7 +183,7 @@ export function validateDocument(value: unknown): VaultDocument {
   }
   if (!Array.isArray(value.entries)) fail('document: bad entries');
   if (!Array.isArray(value.log)) fail('document: bad log');
-  const entries = (value.entries as unknown[]).map((e, i) => checkEntry(e, i));
+  const entries = (value.entries as unknown[]).map((e, i) => validateEntry(e, i));
   const seen = new Set<string>();
   for (const e of entries) {
     if (seen.has(e.id)) fail(`duplicate entry id: ${e.id}`);

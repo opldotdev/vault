@@ -9,4 +9,5 @@ export * from './signer.js';
 export * from './storage/file-storage.js';
 export * from './storage/memory-storage.js';
 export * from './store.js';
+export * from './transfer.js';
 export * from './vault.js';

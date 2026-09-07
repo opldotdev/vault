@@ -32,6 +32,7 @@ import {
   randomId,
   type VaultDocument,
   validateDocument,
+  validateEntry,
 } from './document.js';
 import { recoverEntropy, splitEntropy } from './shares.js';
 import { createSigner, SessionExpired, type Signer } from './signer.js';
@@ -468,6 +469,49 @@ export class Vault {
     return entry.value;
   }
 
+  /**
+   * Read a full entry for export. This is the only export path allowed to touch
+   * secrets: it returns a clone and logs an `export` line (never use `reveal()`
+   * for exports).
+   */
+  readForExport(id: string, detail?: string): Entry {
+    const entry = this.find(id);
+    this.logExport(detail, id);
+    return structuredClone(entry);
+  }
+
+  /** Record that secrets left the vault. Every export path calls this. */
+  logExport(detail?: string, entryId?: string): void {
+    this.appendLog('export', {
+      ...(entryId === undefined ? {} : { entryId }),
+      ...(detail === undefined ? {} : { detail }),
+      ok: true,
+    });
+  }
+
+  /**
+   * Adopt a foreign entry with a fresh id, keeping label, tags, derivation,
+   * roles, and metadata. Logs one `import` line.
+   */
+  adoptEntry(entry: Entry, detail?: string): Entry {
+    const checked = validateEntry({
+      ...entry,
+      tags: entry.tags ?? [],
+      metadata: entry.metadata ?? {},
+    });
+    const adopted: Entry = {
+      ...structuredClone(checked),
+      id: randomId(),
+      updatedAt: isoNow(this.now),
+    };
+    this.doc.entries.push(adopted);
+    this.appendLog('import', {
+      entryId: adopted.id,
+      ...(detail === undefined ? {} : { detail }),
+      ok: true,
+    });
+    return adopted;
+  }
   toDocument(): VaultDocument {
     return structuredClone(this.doc);
   }

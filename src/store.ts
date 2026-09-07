@@ -41,7 +41,7 @@ export function defaultVaultPath(): string {
   return join(homedir(), '.bsv', 'vault.bep');
 }
 
-function randomSuffix(): string {
+export function randomSuffix(): string {
   const bytes = new Uint8Array(4);
   crypto.getRandomValues(bytes);
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
@@ -70,7 +70,7 @@ async function providerToSlotSpec(provider: SealingProvider, id: string): Promis
   throw new Error(`unknown provider type '${(provider as SealingProvider).type}'`);
 }
 
-async function providerToUnlock(
+export async function providerToUnlock(
   provider: SealingProvider,
   slots: InspectResult['slots'],
 ): Promise<Unlock> {
@@ -95,8 +95,16 @@ async function providerToUnlock(
   return { slotId, unwrap: (wrapped: Uint8Array) => provider.unwrap(wrapped) };
 }
 
+export function base64Utf8(text: string): string {
+  return Buffer.from(text, 'utf8').toString('base64');
+}
+
+export function utf8Base64(b64: string): string {
+  return Buffer.from(b64, 'base64').toString('utf8');
+}
+
 function encodeDocument(doc: VaultDocument): string {
-  return Buffer.from(JSON.stringify(doc), 'utf8').toString('base64');
+  return base64Utf8(JSON.stringify(doc));
 }
 
 function decodeVaultBackup(payload: unknown): VaultDocument {
@@ -110,9 +118,7 @@ function decodeVaultBackup(payload: unknown): VaultDocument {
   if (typeof backup.encryptedVault !== 'string') {
     throw new Error('vault payload is missing its encrypted vault document');
   }
-  return validateDocument(
-    JSON.parse(Buffer.from(backup.encryptedVault, 'base64').toString('utf8')),
-  );
+  return validateDocument(JSON.parse(utf8Base64(backup.encryptedVault)));
 }
 
 function vaultBackupPayload(doc: VaultDocument): VaultBackup {
