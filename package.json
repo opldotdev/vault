@@ -10,6 +10,10 @@
       "types": "./dist/index.d.ts",
       "browser": "./dist/browser.js",
       "default": "./dist/index.js"
+    },
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "default": "./dist/browser.js"
     }
   },
   "bin": {
@@ -27,7 +31,8 @@
     "test": "bun test",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "check": "bun run lint && bun test && bun run build"
+    "check": "bun run lint && bun test && bun run build",
+    "prepack": "bun run build"
   },
   "dependencies": {
     "@bsv/sdk": "^2.4.2",

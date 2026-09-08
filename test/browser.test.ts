@@ -25,8 +25,15 @@ describe('browser build', () => {
 
   test('package.json declares the browser export condition', () => {
     const pkg = JSON.parse(readFileSync(PACKAGE_JSON, 'utf8')) as {
-      exports?: { '.'?: { browser?: string } };
+      exports?: {
+        '.'?: { browser?: string };
+        './browser'?: { types?: string; default?: string };
+      };
     };
     expect(pkg.exports?.['.']?.browser).toBe('./dist/browser.js');
+    expect(pkg.exports?.['./browser']).toEqual({
+      types: './dist/browser.d.ts',
+      default: './dist/browser.js',
+    });
   });
 });

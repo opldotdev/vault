@@ -54,7 +54,7 @@ await saveVault(defaultVaultPath(), vault, provider);  // keeps every slot
 
 `signer()` returns a session-bound object that signs, encrypts, and derives public keys but cannot yield its private key. `reveal(id, reason)` is the only path to plaintext, it always logs, and a vault can be created with it disabled.
 
-Providers: `PassphraseProvider`, `DeviceKeyProvider`, `EnclaveProvider` (macOS), `PrfProvider` (browser). Storage: `FileStorage`, `IndexedDbStorage`, `MemoryStorage`. The browser entry (`exports.browser`) excludes the enclave and file storage.
+Providers: `PassphraseProvider`, `DeviceKeyProvider`, `EnclaveProvider` (macOS), `PrfProvider` (browser). Storage: `FileStorage`, `IndexedDbStorage`, `MemoryStorage`. The browser entry (`@opl.dev/vault/browser`) excludes the enclave and file storage.
 
 ## Development
 
