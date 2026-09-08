@@ -37,10 +37,10 @@ Every command takes `--json`, `--vault <path>` (default `~/.bsv/vault.bep`, or `
 ## Library
 
 ```ts
-import { createVault, openVault, saveVault, PassphraseProvider } from '@opl.dev/vault';
+import { createVault, defaultVaultPath, PassphraseProvider, saveVault } from '@opl.dev/vault';
 
 const provider = new PassphraseProvider(process.env.VAULT_PASSPHRASE!);
-const vault = await createVault('~/.bsv/vault.bep', [provider]);
+const vault = await createVault(defaultVaultPath(), [provider]);
 
 const root = vault.generateEntropy('main');
 const agent = vault.profile(root.id, 1, 'agent');      // BRC-157 profile, its own identity key
@@ -49,7 +49,7 @@ vault.unlock('sign a payment');
 const signer = vault.signer(agent.id, { scheme: 'brc42', brc42: { protocolID: [2, 'my app'], keyID: 'k1' } });
 const sig = await signer.sign(new TextEncoder().encode('hello'));
 
-await saveVault('~/.bsv/vault.bep', vault, provider);  // keeps every slot
+await saveVault(defaultVaultPath(), vault, provider);  // keeps every slot
 ```
 
 `signer()` returns a session-bound object that signs, encrypts, and derives public keys but cannot yield its private key. `reveal(id, reason)` is the only path to plaintext, it always logs, and a vault can be created with it disabled.
