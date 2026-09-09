@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.2 — 2026-09-09
+
+### Changed
+- New passphrase slots are Argon2id (64 MiB, t=3, p=1) instead of PBKDF2. Existing pbkdf2 envelopes still open.
+- PassphraseProvider enforces wallet-grade passphrase rules from bitcoin-backup (12+ characters; 16+ or mixed classes). Passphrases are not trimmed.
+
 ## 0.0.1 — 2026-09-08
 
 ### Added

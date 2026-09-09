@@ -1,3 +1,5 @@
+process.env.VAULT_ARGON2_FAST = '1';
+
 import { beforeAll, expect, test } from 'bun:test';
 import { mkdtempSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -232,7 +234,8 @@ test('doctor --json emits one object', async () => {
   expect(report.vaultPath).toBe(vault);
   expect(report.exists).toBe(true);
   expect(report.mode).toBe('0600');
-  expect(report.pbkdf2Present).toBe(true);
+  expect(report.argon2idPresent).toBe(true);
+  expect(report.recoveryPresent).toBe(true);
   expect(report.recoveryPresent).toBe(true);
   expect(report.slots).toHaveLength(1);
   expect(typeof report.platform).toBe('string');

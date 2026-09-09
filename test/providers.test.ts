@@ -1,3 +1,5 @@
+process.env.VAULT_ARGON2_FAST = '1';
+
 import { describe, expect, test } from 'bun:test';
 import { DeviceKeyProvider } from '../src/providers/device-p256.js';
 import { PassphraseProvider } from '../src/providers/passphrase.js';
@@ -5,7 +7,7 @@ import { fromHexString } from '../src/providers/provider.js';
 
 describe('passphrase provider', () => {
   test('wrap/unwrap round trip', async () => {
-    const provider = new PassphraseProvider('correct horse battery staple', 10_000);
+    const provider = new PassphraseProvider('correct horse battery staple');
     expect(provider.isSupported()).toBe(true);
     const contentKey = new Uint8Array(32).fill(7);
     const wrapped = await provider.wrap(contentKey);
@@ -14,22 +16,27 @@ describe('passphrase provider', () => {
     expect(Buffer.from(back).toString('hex')).toBe(Buffer.from(contentKey).toString('hex'));
   });
 
-  test('wrapped layout is salt(16) || iv(12) || ct || tag', async () => {
-    const provider = new PassphraseProvider('another passphrase', 10_000);
+  test('wrapped layout is version || salt || params || iv || ct || tag', async () => {
+    const provider = new PassphraseProvider('another passphrase');
     const wrapped = await provider.wrap(new Uint8Array(32).fill(1));
-    // 16 salt + 12 iv + 32 ct + 16 tag
-    expect(wrapped.length).toBe(16 + 12 + 32 + 16);
+    // 1 version + 16 salt + 12 params + 12 iv + 32 ct + 16 tag
+    expect(wrapped[0]).toBe(0xa2);
+    expect(wrapped.length).toBe(1 + 16 + 12 + 12 + 32 + 16);
   });
 
   test('wrong passphrase fails', async () => {
-    const a = new PassphraseProvider('right', 10_000);
+    const a = new PassphraseProvider('right-pass-word-1');
     const wrapped = await a.wrap(new Uint8Array(32).fill(1));
-    const b = new PassphraseProvider('wrong', 10_000);
+    const b = new PassphraseProvider('wrong-pass-word-1');
     await expect(b.unwrap(wrapped)).rejects.toThrow();
   });
 
   test('empty passphrase is refused', () => {
-    expect(() => new PassphraseProvider('')).toThrow();
+    expect(() => new PassphraseProvider('')).toThrow(/non-empty|at least 12/);
+  });
+
+  test('short common passwords are refused', () => {
+    expect(() => new PassphraseProvider('password1234')).toThrow(/less common|at least 12|16 characters/);
   });
 });
 
@@ -48,8 +55,8 @@ describe('device-p256 provider', () => {
     const back = await device.unwrap(wrapped);
     expect(Buffer.from(back).toString('hex')).toBe(Buffer.from(contentKey).toString('hex'));
 
-    const stored = await device.exportWrapped('device passphrase', 10_000);
-    const restored = await DeviceKeyProvider.importWrapped(stored, 'device passphrase', 10_000);
+    const stored = await device.exportWrapped('device passphrase');
+    const restored = await DeviceKeyProvider.importWrapped(stored, 'device passphrase');
     expect(await restored.publicKey()).toBe(pub);
     const back2 = await restored.unwrap(wrapped);
     expect(Buffer.from(back2).toString('hex')).toBe(Buffer.from(contentKey).toString('hex'));

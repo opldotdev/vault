@@ -1,3 +1,5 @@
+process.env.VAULT_ARGON2_FAST = '1';
+
 import { afterEach, describe, expect, test } from 'bun:test';
 import { mkdtempSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
@@ -143,7 +145,7 @@ describe('inspectVault', () => {
     const inspected = await inspectVault(path);
     expect(inspected.version).toBe(2);
     expect(inspected.slots).toHaveLength(1);
-    expect(inspected.slots[0].type).toBe('pbkdf2');
+    expect(inspected.slots[0].type).toBe('argon2id');
     expect(inspected.slots[0].id.startsWith('passphrase-')).toBe(true);
     expect(inspected.slots[0].publicKey).toBeUndefined();
   });

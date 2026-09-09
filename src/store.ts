@@ -59,9 +59,18 @@ function passphraseOf(provider: SealingProvider): string {
   throw new Error(`provider type '${provider.type}' is not a passphrase provider`);
 }
 
+function argon2Of(provider: SealingProvider): {
+  memoryKiB: number;
+  iterations: number;
+  parallelism: number;
+} {
+  if (provider instanceof PassphraseProvider) return provider.argon2;
+  throw new Error('passphrase provider does not expose argon2 parameters');
+}
+
 async function providerToSlotSpec(provider: SealingProvider, id: string): Promise<SlotSpec> {
   if (provider.type === 'passphrase') {
-    return { type: 'pbkdf2', id, passphrase: passphraseOf(provider) };
+    return { type: 'argon2id', id, passphrase: passphraseOf(provider), ...argon2Of(provider) };
   }
   if (provider.type === 'device-p256' || provider.type === 'enclave') {
     if (!provider.publicKey) throw new Error(`provider type '${provider.type}' has no publicKey`);
@@ -229,11 +238,16 @@ export async function rewrapVault(path: string, unlockProvider: SealingProvider)
   const unlock = await providerToUnlock(unlockProvider, inspected.slots);
   const specs: SlotSpec[] = [];
   for (const slot of inspected.slots) {
-    if (slot.type === 'pbkdf2') {
+    if (slot.type === 'pbkdf2' || slot.type === 'argon2id') {
       if (!(unlockProvider instanceof PassphraseProvider)) {
-        throw new Error('rewrap needs the passphrase provider to rebuild pbkdf2 slots');
+        throw new Error('rewrap needs the passphrase provider to rebuild passphrase slots');
       }
-      specs.push({ type: 'pbkdf2', id: slot.id, passphrase: unlockProvider.passphrase });
+      specs.push({
+        type: 'argon2id',
+        id: slot.id,
+        passphrase: unlockProvider.passphrase,
+        ...unlockProvider.argon2,
+      });
     } else if (slot.type === 'device-p256') {
       if (!slot.publicKey) throw new Error(`slot '${slot.id}' is missing its public key`);
       specs.push({ type: 'device-p256', id: slot.id, publicKey: slot.publicKey });

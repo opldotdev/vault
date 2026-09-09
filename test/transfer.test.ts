@@ -1,3 +1,5 @@
+process.env.VAULT_ARGON2_FAST = '1';
+
 import { describe, expect, test } from 'bun:test';
 import { PrivateKey } from '@bsv/sdk';
 import { decryptBackup, eciesDecrypt, encryptBackup, openBackup, sealBackup } from 'bitcoin-backup';

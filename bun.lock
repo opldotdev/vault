@@ -6,7 +6,7 @@
       "name": "@opl.dev/vault",
       "dependencies": {
         "@bsv/sdk": "^2.4.2",
-        "bitcoin-backup": "^0.1.0",
+        "bitcoin-backup": "^0.2.0",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.5.0",
@@ -42,11 +42,13 @@
 
     "@msgpack/msgpack": ["@msgpack/msgpack@3.1.3", "", {}, "sha512-47XIizs9XZXvuJgoaJUIE2lFoID8ugvc0jzSHP+Ptfk8nTbnR8g788wv48N03Kx0UkAv559HWRQ3yzOgzlRNUA=="],
 
+    "@noble/hashes": ["@noble/hashes@2.4.0", "", {}, "sha512-X5XaVWZIBCT7HHZGm5I7ZQXDwLG+bGXuSrMQAW+7Zvl87h1kmc1ZB1VSRJcpUfoUrGQp4Fkoxm5kZ+Ms+aW+eA=="],
+
     "@types/bun": ["@types/bun@1.4.1", "", { "dependencies": { "bun-types": "1.4.1" } }, "sha512-0AVGiTXGajf1rgKom3N+c5L7CBxuoyyv1i44M0nX4UDK0G/fnRAMiri93nHuVPIb429KKtAgj7HatVmmOjeQLA=="],
 
     "@types/node": ["@types/node@26.5.0", "", { "dependencies": { "undici-types": "~8.9.0" } }, "sha512-dVSGpriSoCgz8WnDNTuSSuSv1PC/ALXihO4ulRZt7Md8k9mlbdin3lGOcDE8SnWOgf513ByWlXd7BK4azmyg/A=="],
 
-    "bitcoin-backup": ["bitcoin-backup@0.1.0", "", { "dependencies": { "@1sat/vault": "^0.0.8", "@1sat/wallet-mac": "^0.0.5", "@msgpack/msgpack": "^3.1.3", "commander": "^15.0.0", "fflate": "^0.8.3" }, "peerDependencies": { "@bsv/sdk": "^2.0.0" }, "bin": { "bbackup": "dist/cli/bbackup.js" } }, "sha512-uG1E+9cuDXGACe12iszilZTr8J+2MpRIicbYeNdTrqhPk/sZXxlN5rJr7VuHEkYuSJVhBfqlO8b/STHSKotS3g=="],
+    "bitcoin-backup": ["bitcoin-backup@0.2.0", "", { "dependencies": { "@1sat/vault": "^0.0.8", "@1sat/wallet-mac": "^0.0.5", "@msgpack/msgpack": "^3.1.3", "@noble/hashes": "^2.4.0", "commander": "^15.0.0", "fflate": "^0.8.3" }, "peerDependencies": { "@bsv/sdk": "^2.0.0" }, "bin": { "bbackup": "dist/cli/bbackup.js" } }, "sha512-//rz6aqQDspZ2qB8nplb75WSLDIENUUkodLDDZLdQ16vjpxwWpaHsBlNkLID2KpqsemPYoW/NoiObNpMegdvkQ=="],
 
     "bun-types": ["bun-types@1.4.1", "", { "dependencies": { "@types/node": "*" } }, "sha512-loKuVrAFZKfEv+JvWkHRS9GW5IqLuLRjVXN9p+vZvBN86O5hf/pBZQ5hSoyipsrMmWObZBDvWnlmKvjKTM0PdA=="],
 

@@ -300,7 +300,7 @@ async function resolveUnlockProvider(
     if (/vault not found|ENOENT/i.test(message)) throw new CliError(EXIT_NOTFOUND, message);
     throw error;
   }
-  const hasPassphraseSlot = slots.some((s) => s.type === 'pbkdf2');
+  const hasPassphraseSlot = slots.some((s) => s.type === 'pbkdf2' || s.type === 'argon2id');
   const hasDeviceSlot = slots.some((s) => s.type === 'device-p256');
   if (!hasPassphraseSlot && hasDeviceSlot && isEnclaveSupported()) {
     return { provider: new EnclaveProvider('vault'), passphrase: null };
@@ -1142,7 +1142,9 @@ async function cmdDoctor(vaultPath: string, globals: Globals): Promise<void> {
     }
   }
   const pbkdf2Present = slots.some((s) => s.type === 'pbkdf2');
+  const argon2idPresent = slots.some((s) => s.type === 'argon2id');
   const devicePresent = slots.some((s) => s.type === 'device-p256');
+  const recoveryPresent = pbkdf2Present || argon2idPresent;
   const report = {
     platform,
     enclaveSupported: enclave.supported,
@@ -1153,8 +1155,9 @@ async function cmdDoctor(vaultPath: string, globals: Globals): Promise<void> {
     mode,
     slots,
     pbkdf2Present,
+    argon2idPresent,
     devicePresent,
-    recoveryPresent: pbkdf2Present,
+    recoveryPresent,
   };
   if (globals.json) emit(report);
   else {
@@ -1164,7 +1167,7 @@ async function cmdDoctor(vaultPath: string, globals: Globals): Promise<void> {
     );
     process.stdout.write(`vault: ${vaultPath} exists=${String(exists)} mode=${mode ?? 'n/a'}\n`);
     process.stdout.write(
-      `slots: pbkdf2=${String(pbkdf2Present)} device-p256=${String(devicePresent)} recovery=${String(pbkdf2Present)}\n`,
+      `slots: argon2id=${String(argon2idPresent)} pbkdf2=${String(pbkdf2Present)} device-p256=${String(devicePresent)} recovery=${String(recoveryPresent)}\n`,
     );
     for (const s of slots) {
       process.stdout.write(`  ${s.id} ${s.type}\n`);
